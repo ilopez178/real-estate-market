@@ -16,28 +16,6 @@ self.addEventListener('activate', event => {
   );
 });
 
-self.addEventListener('fetch', event => {
-  const { url } = event.request;
-
-  if (url.includes(FRED_ORIGIN)) {
-    event.respondWith(networkFirst(event.request));
-  }
-});
-
-async function networkFirst(request) {
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    const cached = await caches.match(request);
-    if (cached) return cached;
-    throw new Error('Network error and no cache available');
-  }
-}
 
 // Push notification handler
 self.addEventListener('push', event => {
