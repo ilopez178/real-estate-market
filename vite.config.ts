@@ -24,17 +24,6 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/api\.stlouisfed\.org\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'fred-api-cache',
-              expiration: { maxEntries: 50, maxAgeSeconds: 300 },
-              cacheableResponse: { statuses: [0, 200] }
-            }
-          }
-        ]
       }
     })
   ]
