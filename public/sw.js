@@ -1,6 +1,6 @@
 // Service worker for Mortgage Rates Tracker PWA
 
-const CACHE_NAME = 'mortgage-tracker-v1';
+const CACHE_NAME = 'mortgage-tracker-v2';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
