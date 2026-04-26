@@ -7,7 +7,7 @@ const NATIONAL_DATA_URL = `${import.meta.env.BASE_URL}data/national.json`;
 
 interface NationalData {
   fetchedAt: string;
-  current: { rate15: number; date15: string; rate30: number; date30: string };
+  current: { rate15: number; date15: string; rate30: number; date30: string } | null;
   history15: { date: string; value: number }[];
   history30: { date: string; value: number }[];
 }
@@ -16,7 +16,7 @@ let _national: NationalData | null = null;
 async function getNational(): Promise<NationalData> {
   if (_national) return _national;
   const res = await fetch(NATIONAL_DATA_URL);
-  if (!res.ok) throw new Error('Failed to load mortgage rate data');
+  if (!res.ok) throw new Error('Rate data file not found — rebuild required');
   _national = await res.json() as NationalData;
   return _national;
 }
@@ -47,6 +47,7 @@ function parseRate(obs: FredObservation[]): number | null {
 
 export async function fetchCurrentRates(): Promise<CurrentRates> {
   const data = await getNational();
+  if (!data.current) throw new Error('Mortgage rate data unavailable — check VITE_FRED_API_KEY secret and redeploy');
   return data.current;
 }
 

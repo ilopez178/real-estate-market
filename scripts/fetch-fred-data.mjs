@@ -6,7 +6,7 @@ const FRED_BASE = 'https://api.stlouisfed.org/fred/series/observations';
 async function fetchSeries(seriesId, params = {}) {
   const q = new URLSearchParams({
     series_id: seriesId,
-    api_key: API_KEY,
+    api_key: API_KEY ?? '',
     file_type: 'json',
     sort_order: 'desc',
     ...params,
@@ -19,7 +19,10 @@ async function fetchSeries(seriesId, params = {}) {
 }
 
 async function main() {
-  if (!API_KEY) throw new Error('VITE_FRED_API_KEY secret is not set');
+  if (!API_KEY) {
+    console.warn('Warning: VITE_FRED_API_KEY is not set — writing empty data file');
+    return null;
+  }
 
   const tenYearsAgo = new Date();
   tenYearsAgo.setFullYear(tenYearsAgo.getFullYear() - 10);
@@ -33,7 +36,8 @@ async function main() {
     fetchSeries('MORTGAGE30US', { observation_start: start, sort_order: 'asc' }),
   ]);
 
-  const national = {
+  console.log(`Done: 30Y=${cur30[0].value}%  15Y=${cur15[0].value}%  (${cur30[0].date})`);
+  return {
     fetchedAt: new Date().toISOString(),
     current: {
       rate15: parseFloat(cur15[0].value),
@@ -44,13 +48,25 @@ async function main() {
     history15: hist15.map(o => ({ date: o.date, value: parseFloat(o.value) })),
     history30: hist30.map(o => ({ date: o.date, value: parseFloat(o.value) })),
   };
-
-  mkdirSync('public/data', { recursive: true });
-  writeFileSync('public/data/national.json', JSON.stringify(national));
-  console.log(`Done: 30Y=${cur30[0].value}%  15Y=${cur15[0].value}%  (${cur30[0].date})`);
 }
 
-main().catch(err => {
-  console.error('fetch-fred-data failed:', err.message);
-  process.exit(1);
-});
+main()
+  .then(data => {
+    mkdirSync('public/data', { recursive: true });
+    writeFileSync('public/data/national.json', JSON.stringify(data ?? {
+      fetchedAt: new Date().toISOString(),
+      current: null,
+      history15: [],
+      history30: [],
+    }));
+  })
+  .catch(err => {
+    console.warn('Warning: FRED data fetch failed:', err.message);
+    mkdirSync('public/data', { recursive: true });
+    writeFileSync('public/data/national.json', JSON.stringify({
+      fetchedAt: new Date().toISOString(),
+      current: null,
+      history15: [],
+      history30: [],
+    }));
+  });
