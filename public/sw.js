@@ -1,8 +1,6 @@
 // Service worker for Mortgage Rates Tracker PWA
-// Network-first for API calls, cache-first for static assets
 
-const CACHE_NAME = 'mortgage-tracker-v1';
-const FRED_ORIGIN = 'https://api.stlouisfed.org';
+const CACHE_NAME = 'mortgage-tracker-v2';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
@@ -15,7 +13,6 @@ self.addEventListener('activate', event => {
     ).then(() => self.clients.claim())
   );
 });
-
 
 // Push notification handler
 self.addEventListener('push', event => {

@@ -30,6 +30,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Fetch FRED data
+        run: node scripts/fetch-fred-data.mjs
+        env:
+          VITE_FRED_API_KEY: ${{ secrets.VITE_FRED_API_KEY }}
+
       - name: Build
         run: npm run build
         env:
