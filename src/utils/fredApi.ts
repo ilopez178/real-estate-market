@@ -58,12 +58,6 @@ async function fetchSeries(seriesId: string, params: Record<string, string> = {}
   return data.observations.filter(o => o.value !== '.' && o.value !== 'ND');
 }
 
-function parseRate(obs: FredObservation[]): number | null {
-  if (!obs.length) return null;
-  const val = parseFloat(obs[0].value);
-  return isNaN(val) ? null : val;
-}
-
 export async function fetchCurrentRates(): Promise<CurrentRates> {
   const data = await getNational();
   if (!data.current) throw new Error('Mortgage rate data unavailable — check VITE_FRED_API_KEY secret and redeploy');
