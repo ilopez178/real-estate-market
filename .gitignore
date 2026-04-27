@@ -22,3 +22,6 @@ dist-ssr
 
 # OS
 .DS_Store
+
+# Supabase CLI temp files
+supabase/.temp
