@@ -42,8 +42,8 @@ export default function NotificationToggle() {
       disabled={loading}
       className={`flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded border transition-colors disabled:opacity-50 ${
         subscribed
-          ? 'bg-[#0073B9] text-white border-[#0073B9] hover:bg-[#005a94]'
-          : 'bg-white text-gray-600 border-gray-200 hover:border-[#0073B9] hover:text-[#0073B9]'
+          ? 'bg-[#0ea5e9] text-white border-[#0ea5e9] hover:bg-sky-400'
+          : 'bg-[#111111] text-[#6b7280] border-[#333333] hover:border-[#0ea5e9] hover:text-[#0ea5e9]'
       }`}
       title={subscribed ? 'Turn off rate alerts' : 'Get rate change alerts'}
     >

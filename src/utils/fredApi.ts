@@ -1,9 +1,13 @@
 import type { FredObservation, RateData, CurrentRates, StateMarketData } from '../types';
 import type { StateInfo } from '../types';
 
-const FRED_BASE = 'https://api.stlouisfed.org/fred/series/observations';
-const API_KEY = import.meta.env.VITE_FRED_API_KEY as string;
+// National rates: served from pre-built JSON fetched at build time (no CORS issues)
 const NATIONAL_DATA_URL = `${import.meta.env.BASE_URL}data/national.json`;
+
+// State data: proxied through Supabase Edge Function to avoid browser→FRED CORS
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+const FRED_DIRECT = 'https://api.stlouisfed.org/fred/series/observations';
 
 interface NationalData {
   fetchedAt: string;
@@ -21,19 +25,34 @@ async function getNational(): Promise<NationalData> {
   return _national;
 }
 
+function getStateBase(): string {
+  return SUPABASE_URL && SUPABASE_ANON_KEY
+    ? `${SUPABASE_URL}/functions/v1/fred-proxy`
+    : FRED_DIRECT;
+}
+
 function fredUrl(seriesId: string, params: Record<string, string> = {}): string {
   const q = new URLSearchParams({
     series_id: seriesId,
-    api_key: API_KEY,
     file_type: 'json',
     sort_order: 'desc',
     ...params,
   });
-  return `${FRED_BASE}?${q}`;
+  const base = getStateBase();
+  if (base === FRED_DIRECT) {
+    const key = import.meta.env.VITE_FRED_API_KEY as string | undefined;
+    if (key) q.set('api_key', key);
+  }
+  return `${base}?${q}`;
 }
 
 async function fetchSeries(seriesId: string, params: Record<string, string> = {}): Promise<FredObservation[]> {
-  const res = await fetch(fredUrl(seriesId, params));
+  const headers: HeadersInit = {};
+  if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+    headers['Authorization'] = `Bearer ${SUPABASE_ANON_KEY}`;
+    headers['apikey'] = SUPABASE_ANON_KEY;
+  }
+  const res = await fetch(fredUrl(seriesId, params), { headers });
   if (!res.ok) throw new Error(`FRED ${seriesId}: ${res.status}`);
   const data = await res.json() as { observations: FredObservation[] };
   return data.observations.filter(o => o.value !== '.' && o.value !== 'ND');
@@ -81,9 +100,9 @@ export async function fetchStateMarketData(state: StateInfo): Promise<StateMarke
   const { fredCodes } = state;
 
   const fetches: Promise<FredObservation[]>[] = [
-    fetchSeries(fredCodes.sthpi,       { limit: '1' }).catch(() => []),
-    fetchSeries(fredCodes.permits,     { limit: '1' }).catch(() => []),
-    fetchSeries(fredCodes.daysOnMarket,{ limit: '1' }).catch(() => []),
+    fetchSeries(fredCodes.sthpi,        { limit: '1' }).catch(() => []),
+    fetchSeries(fredCodes.permits,      { limit: '1' }).catch(() => []),
+    fetchSeries(fredCodes.daysOnMarket, { limit: '1' }).catch(() => []),
   ];
 
   if (fredCodes.existingSales) {
@@ -92,10 +111,10 @@ export async function fetchStateMarketData(state: StateInfo): Promise<StateMarke
 
   const [sthpiObs, permitsObs, domObs, salesObs] = await Promise.all(fetches);
 
-  const hpi    = latestObservation(sthpiObs ?? []);
+  const hpi     = latestObservation(sthpiObs ?? []);
   const permits = latestObservation(permitsObs ?? []);
-  const dom    = latestObservation(domObs ?? []);
-  const sales  = latestObservation(salesObs ?? []);
+  const dom     = latestObservation(domObs ?? []);
+  const sales   = latestObservation(salesObs ?? []);
 
   return {
     homePrice: hpi.value,
@@ -118,11 +137,16 @@ export async function fetchMarketConditionHistory(state: StateInfo): Promise<{
   const start = startDateForRange('5y');
   const { fredCodes } = state;
 
-  const [hpiHistory, permitsHistory, domHistory, rate30History] = await Promise.all([
+  // Pull 30-year history from the pre-built national JSON instead of a live FRED call
+  const nationalData = await getNational();
+  const rate30History: FredObservation[] = nationalData.history30
+    .filter(o => o.date >= start)
+    .map(o => ({ date: o.date, value: String(o.value) }));
+
+  const [hpiHistory, permitsHistory, domHistory] = await Promise.all([
     fetchSeries(fredCodes.sthpi,        { observation_start: start, sort_order: 'asc' }).catch(() => []),
     fetchSeries(fredCodes.permits,      { observation_start: start, sort_order: 'asc' }).catch(() => []),
     fetchSeries(fredCodes.daysOnMarket, { observation_start: start, sort_order: 'asc' }).catch(() => []),
-    fetchSeries('MORTGAGE30US',         { observation_start: start, sort_order: 'asc' }).catch(() => []),
   ]);
 
   return { hpiHistory, permitsHistory, domHistory, rate30History };
