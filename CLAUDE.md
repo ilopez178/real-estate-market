@@ -127,18 +127,39 @@ State data uses these FRED series patterns:
 - Colorado `daysOnMarket` had a Cyrillic `О` instead of Latin `O` — now fixed to `MEDDAYONMARCO`
 - Kentucky had the same series ID as Kansas — now fixed to `MEDDAYONMARKY`
 
+## Supabase Project
+
+**Active project**: `zukyaiizgibjvcggxupw`
+**Project URL**: `https://zukyaiizgibjvcggxupw.supabase.co`
+**Edge Function endpoint**: `https://zukyaiizgibjvcggxupw.supabase.co/functions/v1/fred-proxy`
+
+### GitHub Secrets required (set in repo Settings → Secrets → Actions)
+```
+VITE_SUPABASE_URL      = https://zukyaiizgibjvcggxupw.supabase.co
+VITE_SUPABASE_ANON_KEY = <anon key from Supabase dashboard → Settings → API>
+VITE_FRED_API_KEY      = <FRED API key — used by build-time fetch script>
+VITE_VAPID_PUBLIC_KEY  = <VAPID public key for push notifications>
+```
+
 ## Deployment
 
-### First-time Supabase setup (required for production API to work)
+### Supabase setup for new project (run from repo root)
 ```bash
-# 1. Deploy the Edge Function
+# 1. Link to the active project
+supabase link --project-ref zukyaiizgibjvcggxupw
+
+# 2. Deploy the Edge Function
 supabase functions deploy fred-proxy
 
-# 2. Set the FRED API key as a Supabase secret (never goes to browser)
+# 3. Set the FRED API key as a Supabase secret (never goes to browser)
 supabase secrets set FRED_API_KEY=your_actual_fred_api_key
 
-# 3. Set GitHub Secrets in repo settings:
-#    VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_VAPID_PUBLIC_KEY
+# 4. Verify the secret is set
+supabase secrets list
+
+# 5. Test the function (replace ANON_KEY with value from Supabase dashboard)
+curl "https://zukyaiizgibjvcggxupw.supabase.co/functions/v1/fred-proxy?series_id=MORTGAGE30US&limit=1&file_type=json" \
+  -H "Authorization: Bearer <ANON_KEY>"
 ```
 
 ### Push to deploy
