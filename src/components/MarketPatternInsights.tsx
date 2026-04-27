@@ -37,7 +37,6 @@ function buildInsights(history: RateData[], stateData: StateMarketData | null): 
     }
   }
 
-  // 15/30 spread
   const valid15 = history.filter(d => d.rate15 !== null);
   if (valid15.length && valid30.length) {
     const r15 = valid15[valid15.length - 1].rate15!;
@@ -50,7 +49,6 @@ function buildInsights(history: RateData[], stateData: StateMarketData | null): 
     }
   }
 
-  // Days on market
   if (stateData?.daysOnMarket !== null && stateData?.daysOnMarket !== undefined) {
     const dom = stateData.daysOnMarket;
     if (dom < 25) {
@@ -70,31 +68,31 @@ function buildInsights(history: RateData[], stateData: StateMarketData | null): 
 }
 
 const TAG_STYLES = {
-  buyer:   'bg-blue-50 text-[#0073B9] border-blue-200',
-  seller:  'bg-green-50 text-[#00A87E] border-green-200',
-  general: 'bg-gray-50 text-gray-600 border-gray-200',
+  buyer:   'bg-sky-950/30 text-[#0ea5e9] border-sky-900',
+  seller:  'bg-emerald-950/30 text-[#10b981] border-emerald-900',
+  general: 'bg-[#1e1e1e] text-[#9ca3af] border-[#333333]',
 };
 
 const TYPE_STYLES = {
-  positive: 'border-l-4 border-l-green-400',
-  warning:  'border-l-4 border-l-[#FF9000]',
-  neutral:  'border-l-4 border-l-gray-300',
+  positive: 'border-l-4 border-l-emerald-500',
+  warning:  'border-l-4 border-l-orange-500',
+  neutral:  'border-l-4 border-l-[#4b5563]',
 };
 
 export default function MarketPatternInsights({ history, stateData, stateName }: Props) {
   const insights = buildInsights(history, stateData);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">Market Pattern Insights — {stateName}</h2>
+    <div className="bg-[#111111] rounded-lg border border-[#2a2a2a] p-6">
+      <h2 className="text-lg font-semibold text-white mb-4">Market Pattern Insights — {stateName}</h2>
       {insights.length === 0 ? (
-        <p className="text-sm text-gray-400">Loading market insights…</p>
+        <p className="text-sm text-[#6b7280]">Loading market insights…</p>
       ) : (
         <div className="space-y-3">
           {insights.map((ins, i) => (
-            <div key={i} className={`rounded-md bg-gray-50 p-4 ${TYPE_STYLES[ins.type]}`}>
+            <div key={i} className={`rounded-md bg-[#1a1a1a] p-4 ${TYPE_STYLES[ins.type]}`}>
               <div className="flex items-start justify-between gap-3">
-                <p className="text-sm text-gray-700">{ins.text}</p>
+                <p className="text-sm text-[#c8c8c8]">{ins.text}</p>
                 <span className={`text-xs font-medium px-2 py-0.5 rounded border capitalize flex-shrink-0 ${TAG_STYLES[ins.tag]}`}>
                   {ins.tag}
                 </span>

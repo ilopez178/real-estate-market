@@ -39,7 +39,6 @@ export default function App() {
   const [geolocating, setGeolocating]       = useState(false);
   const [error, setError]                   = useState<string | null>(null);
 
-  // Load current rates once
   useEffect(() => {
     fetchCurrentRates()
       .then(setCurrentRates)
@@ -47,7 +46,6 @@ export default function App() {
       .finally(() => setLoadingRates(false));
   }, []);
 
-  // Load rate history when range changes
   useEffect(() => {
     setLoadingHistory(true);
     fetchRateHistory(range)
@@ -59,7 +57,6 @@ export default function App() {
       .finally(() => setLoadingHistory(false));
   }, [range]);
 
-  // Load state data when state changes
   const loadStateData = useCallback(async (code: string) => {
     const state = getStateByCode(code);
     if (!state) return;
@@ -107,20 +104,19 @@ export default function App() {
   const selectedState = getStateByCode(stateCode);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-[#080808]">
+      <header className="bg-[#080808] border-b border-[#2a2a2a] sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#0073B9] rounded flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 bg-[#0ea5e9] rounded flex items-center justify-center flex-shrink-0">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                 <polyline points="9 22 9 12 15 12 15 22" />
               </svg>
             </div>
             <div>
-              <h1 className="text-base font-semibold text-gray-900 leading-tight">Mortgage Rates Tracker</h1>
-              <p className="text-xs text-gray-400 hidden sm:block">Powered by FRED · Federal Reserve Bank of St. Louis</p>
+              <h1 className="text-base font-semibold text-white leading-tight">Mortgage Rates Tracker</h1>
+              <p className="text-xs text-[#6b7280] hidden sm:block">Powered by FRED · Federal Reserve Bank of St. Louis</p>
             </div>
           </div>
           <NotificationToggle />
@@ -129,20 +125,18 @@ export default function App() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm flex items-center justify-between">
+          <div className="bg-red-950/30 border border-red-900 text-red-400 rounded-lg px-4 py-3 text-sm flex items-center justify-between">
             <span>{error}</span>
-            <button onClick={() => setError(null)} className="ml-4 text-red-400 hover:text-red-600">✕</button>
+            <button onClick={() => setError(null)} className="ml-4 text-red-500 hover:text-red-300">✕</button>
           </div>
         )}
 
-        {/* Current rates */}
         {loadingRates ? (
           <LoadingSpinner label="Fetching latest mortgage rates…" />
         ) : currentRates ? (
           <RateCard rates={currentRates} history={rateHistory} />
         ) : null}
 
-        {/* Historical chart + forecast */}
         <RateChart
           history={rateHistory}
           forecast={forecast?.points ?? []}
@@ -153,10 +147,9 @@ export default function App() {
           loading={loadingHistory}
         />
 
-        {/* State section */}
         <div>
           <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-            <h2 className="text-base font-semibold text-gray-700">State Market Data</h2>
+            <h2 className="text-base font-semibold text-[#c8c8c8]">State Market Data</h2>
             <StateSelector
               selectedCode={stateCode}
               onSelect={setStateCode}
@@ -174,7 +167,7 @@ export default function App() {
             {currentRates && forecast ? (
               <ForecastInsights forecast={forecast} currentRates={currentRates} />
             ) : (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+              <div className="bg-[#111111] rounded-lg border border-[#2a2a2a] p-6">
                 <LoadingSpinner label="Building forecast…" />
               </div>
             )}
@@ -195,8 +188,8 @@ export default function App() {
         </div>
       </main>
 
-      <footer className="border-t border-gray-200 bg-white mt-12 py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-xs text-gray-400 flex flex-wrap gap-4 justify-between">
+      <footer className="border-t border-[#2a2a2a] bg-[#080808] mt-12 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-xs text-[#4b5563] flex flex-wrap gap-4 justify-between">
           <span>Data: FRED / Federal Reserve Bank of St. Louis · MORTGAGE15US · MORTGAGE30US</span>
           <span>Forecasts are algorithmic estimates, not financial advice.</span>
         </div>

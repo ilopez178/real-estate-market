@@ -73,38 +73,35 @@ export default function RateChart({ history, forecast, range, onRangeChange, sho
   const todayStr = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+    <div className="bg-[#111111] rounded-lg border border-[#2a2a2a] p-6">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <h2 className="text-lg font-semibold text-gray-800">Historical Rates</h2>
+        <h2 className="text-lg font-semibold text-white">Historical Rates</h2>
         <div className="flex flex-wrap gap-2">
-          {/* Time range */}
-          <div className="flex rounded border border-gray-200 overflow-hidden">
+          <div className="flex rounded border border-[#333333] overflow-hidden">
             {(['2y', '5y', '10y'] as TimeRange[]).map(r => (
               <button
                 key={r}
                 onClick={() => onRangeChange(r)}
-                className={`px-3 py-1 text-sm font-medium transition-colors ${range === r ? 'bg-[#0073B9] text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                className={`px-3 py-1 text-sm font-medium transition-colors ${range === r ? 'bg-[#0ea5e9] text-white' : 'bg-[#1a1a1a] text-[#6b7280] hover:bg-[#222222]'}`}
               >
                 {RANGE_LABELS[r]}
               </button>
             ))}
           </div>
-          {/* Grouping */}
-          <div className="flex rounded border border-gray-200 overflow-hidden">
+          <div className="flex rounded border border-[#333333] overflow-hidden">
             {(['daily', 'weekly', 'monthly', 'annually'] as Grouping[]).map(g => (
               <button
                 key={g}
                 onClick={() => setGrouping(g)}
-                className={`px-3 py-1 text-sm font-medium transition-colors ${grouping === g ? 'bg-[#0073B9] text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                className={`px-3 py-1 text-sm font-medium transition-colors ${grouping === g ? 'bg-[#0ea5e9] text-white' : 'bg-[#1a1a1a] text-[#6b7280] hover:bg-[#222222]'}`}
               >
                 {GROUPING_LABELS[g]}
               </button>
             ))}
           </div>
-          {/* Forecast toggle */}
           <button
             onClick={onToggleForecast}
-            className={`px-3 py-1 text-sm font-medium rounded border transition-colors ${showForecast ? 'bg-[#FF9000] text-white border-[#FF9000]' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+            className={`px-3 py-1 text-sm font-medium rounded border transition-colors ${showForecast ? 'bg-[#f97316] text-white border-[#f97316]' : 'bg-[#1a1a1a] text-[#6b7280] border-[#333333] hover:bg-[#222222]'}`}
           >
             {showForecast ? 'Hide Forecast' : 'Show Forecast'}
           </button>
@@ -112,36 +109,36 @@ export default function RateChart({ history, forecast, range, onRangeChange, sho
       </div>
 
       {loading ? (
-        <div className="h-72 flex items-center justify-center text-gray-400">Loading rate history…</div>
+        <div className="h-72 flex items-center justify-center text-[#6b7280]">Loading rate history…</div>
       ) : (
         <ResponsiveContainer width="100%" height={320}>
           <LineChart data={chartData} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
             <XAxis
               dataKey="date"
               tickFormatter={d => formatXAxis(d as string, grouping)}
-              tick={{ fontSize: 11, fill: '#9ca3af' }}
+              tick={{ fontSize: 11, fill: '#6b7280' }}
               interval="preserveStartEnd"
             />
             <YAxis
               domain={['auto', 'auto']}
-              tick={{ fontSize: 11, fill: '#9ca3af' }}
+              tick={{ fontSize: 11, fill: '#6b7280' }}
               tickFormatter={v => `${v}%`}
               width={44}
             />
             <Tooltip
               formatter={(v: unknown, name: string) => [`${v}%`, name]}
               labelFormatter={l => new Date(l as string + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-              contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 13 }}
+              contentStyle={{ background: '#1a1a1a', border: '1px solid #333333', borderRadius: 8, fontSize: 13, color: '#c8c8c8' }}
             />
-            <Legend wrapperStyle={{ fontSize: 13 }} />
-            {showForecast && <ReferenceLine x={todayStr} stroke="#9ca3af" strokeDasharray="4 4" label={{ value: 'Today', position: 'top', fontSize: 11, fill: '#9ca3af' }} />}
-            <Line type="monotone" dataKey="rate15" name="15-Year" stroke="#00A87E" dot={false} strokeWidth={2} connectNulls />
-            <Line type="monotone" dataKey="rate30" name="30-Year" stroke="#0073B9" dot={false} strokeWidth={2} connectNulls />
+            <Legend wrapperStyle={{ fontSize: 13, color: '#c8c8c8' }} />
+            {showForecast && <ReferenceLine x={todayStr} stroke="#6b7280" strokeDasharray="4 4" label={{ value: 'Today', position: 'top', fontSize: 11, fill: '#6b7280' }} />}
+            <Line type="monotone" dataKey="rate15" name="15-Year" stroke="#10b981" dot={false} strokeWidth={2} connectNulls />
+            <Line type="monotone" dataKey="rate30" name="30-Year" stroke="#0ea5e9" dot={false} strokeWidth={2} connectNulls />
             {showForecast && (
               <>
-                <Line type="monotone" dataKey="forecast15" name="15-Year Forecast" stroke="#00A87E" dot={false} strokeWidth={2} strokeDasharray="5 4" connectNulls />
-                <Line type="monotone" dataKey="forecast30" name="30-Year Forecast" stroke="#0073B9" dot={false} strokeWidth={2} strokeDasharray="5 4" connectNulls />
+                <Line type="monotone" dataKey="forecast15" name="15-Year Forecast" stroke="#10b981" dot={false} strokeWidth={2} strokeDasharray="5 4" connectNulls />
+                <Line type="monotone" dataKey="forecast30" name="30-Year Forecast" stroke="#0ea5e9" dot={false} strokeWidth={2} strokeDasharray="5 4" connectNulls />
               </>
             )}
           </LineChart>
