@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { Info } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ReferenceLine, ResponsiveContainer, Legend,
@@ -44,6 +45,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
 
 export default function MarketConditionChart({ data, stateName, loading }: Props) {
   const latest = data[data.length - 1];
+  const [showInfo, setShowInfo] = useState(false);
 
   const gradientId = 'marketGradient';
 
@@ -56,7 +58,38 @@ export default function MarketConditionChart({ data, stateName, loading }: Props
   return (
     <div className="bg-[#111111] rounded-lg border border-[#2a2a2a] p-6">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-lg font-semibold text-white">Market Condition — {stateName}</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-white">Market Condition — {stateName}</h2>
+          <div className="relative">
+            <button
+              onMouseEnter={() => setShowInfo(true)}
+              onMouseLeave={() => setShowInfo(false)}
+              className="text-[#4b5563] hover:text-[#6b7280] transition-colors flex items-center"
+              aria-label="Market condition explained"
+            >
+              <Info className="w-4 h-4" />
+            </button>
+            {showInfo && (
+              <div className="absolute left-0 top-6 z-20 w-72 bg-[#1a1a1a] border border-[#333333] rounded-lg shadow-xl p-3 text-xs">
+                <div className="space-y-2">
+                  <div>
+                    <span className="font-semibold text-[#10b981]">Seller's Market (+1)</span>
+                    <p className="text-[#6b7280] mt-0.5">Low inventory, homes sell fast, prices rising. Sellers hold more negotiating power.</p>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-[#0ea5e9]">Buyer's Market (−1)</span>
+                    <p className="text-[#6b7280] mt-0.5">More homes than buyers, longer days on market, prices soften. Buyers can negotiate.</p>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-[#6b7280]">Neutral (0)</span>
+                    <p className="text-[#6b7280] mt-0.5">Supply and demand roughly balanced. Typical conditions for both sides.</p>
+                  </div>
+                </div>
+                <p className="mt-2 pt-2 border-t border-[#2a2a2a] text-[#4b5563]">Score combines HPI growth, building permits, days on market, and rate trends.</p>
+              </div>
+            )}
+          </div>
+        </div>
         {latest && (
           <span
             className="text-sm font-semibold px-3 py-1 rounded-full border"

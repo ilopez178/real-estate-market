@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://irvinglopez.com/real-estate-market/sitemap.xml

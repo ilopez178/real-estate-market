@@ -2,15 +2,115 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0073B9" />
-    <meta name="description" content="Real-time mortgage rate dashboard with state-level market data and 30-day forecasts" />
-    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-    <link rel="manifest" href="/manifest.webmanifest" />
-    <!-- Adobe Typekit / Gibson font (replace kit ID with your own) -->
-    <!-- <link rel="stylesheet" href="https://use.typekit.net/YOUR_KIT_ID.css" /> -->
-    <title>Mortgage Rates Tracker</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/real-estate-market/favicon.svg" />
+    <link rel="apple-touch-icon" href="/real-estate-market/icons/icon-192.png" />
+
+    <!-- Primary SEO -->
+    <title>Mortgage Rates Tracker | Live 30-Year & 15-Year Rates + State Market Data</title>
+    <meta name="description" content="Track live 30-year and 15-year mortgage rates, state-level housing market conditions, buyer vs. seller market scores, and 30-day forecasts — powered by Federal Reserve FRED data." />
+    <meta name="keywords" content="mortgage rates, current mortgage rates, 30-year mortgage rate, 15-year mortgage rate, mortgage rate tracker, housing market data, real estate market conditions, buyer's market, seller's market, mortgage rate forecast, FRED mortgage rates, home buying affordability" />
+    <meta name="author" content="Irving Lopez" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://irvinglopez.com/real-estate-market/" />
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#080808" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://irvinglopez.com/real-estate-market/" />
+    <meta property="og:title" content="Mortgage Rates Tracker | Live Rates & State Market Data" />
+    <meta property="og:description" content="Track live 30-year and 15-year mortgage rates, state-level housing market conditions, and buyer vs. seller market scores — powered by FRED." />
+    <meta property="og:site_name" content="Irving Lopez — irvinglopez.com" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Mortgage Rates Tracker | Live Rates & State Market Data" />
+    <meta name="twitter:description" content="Track live 30-year and 15-year mortgage rates, state-level housing market conditions, and buyer vs. seller market scores — powered by FRED." />
+    <meta name="twitter:creator" content="@irvinglopez" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/real-estate-market/manifest.webmanifest" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "Mortgage Rates Tracker",
+          "description": "Track live 30-year and 15-year mortgage rates, state-level housing market conditions, affordability forecasts, and buyer vs. seller market scores — powered by Federal Reserve FRED data.",
+          "url": "https://irvinglopez.com/real-estate-market/",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Any",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Irving Lopez",
+            "url": "https://irvinglopez.com"
+          },
+          "creator": {
+            "@type": "Person",
+            "name": "Irving Lopez",
+            "url": "https://irvinglopez.com"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is the current 30-year mortgage rate?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The current 30-year fixed mortgage rate is updated weekly from the Federal Reserve's FRED database (series MORTGAGE30US). Visit this tracker for the latest figure."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is the current 15-year mortgage rate?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The current 15-year fixed mortgage rate is updated weekly from the Federal Reserve's FRED database (series MORTGAGE15US). Visit this tracker for the latest figure."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is a seller's market in real estate?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "A seller's market occurs when housing demand exceeds supply — homes sell quickly, inventory is low, and prices rise. Sellers have more negotiating power and buyers often face competition."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is a buyer's market in real estate?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "A buyer's market occurs when housing supply exceeds demand — homes sit on the market longer, inventory is high, and prices soften. Buyers have more negotiating leverage."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How is the market condition score calculated?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The market condition score combines four signals from FRED data: home price index growth, building permits, median days on market, and mortgage rate trends. The composite score ranges from -1 (strong buyer's market) to +1 (strong seller's market)."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

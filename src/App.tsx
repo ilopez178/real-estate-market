@@ -116,7 +116,10 @@ export default function App() {
             </div>
             <div>
               <h1 className="text-base font-semibold text-white leading-tight">Mortgage Rates Tracker</h1>
-              <p className="text-xs text-[#6b7280] hidden sm:block">Powered by FRED · Federal Reserve Bank of St. Louis</p>
+              <p className="text-xs text-[#6b7280] hidden sm:block">
+                <a href="https://irvinglopez.com" className="hover:text-[#0ea5e9] transition-colors">irvinglopez.com</a>
+                {' '}· Powered by FRED
+              </p>
             </div>
           </div>
           <NotificationToggle />
@@ -189,9 +192,12 @@ export default function App() {
       </main>
 
       <footer className="border-t border-[#2a2a2a] bg-[#080808] mt-12 py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-xs text-[#4b5563] flex flex-wrap gap-4 justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-xs text-[#4b5563] flex flex-wrap gap-4 justify-between items-center">
           <span>Data: FRED / Federal Reserve Bank of St. Louis · MORTGAGE15US · MORTGAGE30US</span>
           <span>Forecasts are algorithmic estimates, not financial advice.</span>
+          <a href="https://irvinglopez.com" className="text-[#4b5563] hover:text-[#0ea5e9] transition-colors">
+            Part of irvinglopez.com ↗
+          </a>
         </div>
       </footer>
     </div>
