@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Info } from 'lucide-react';
+import { useMemo, useState, useRef, useEffect } from 'react';
+import { Info, X } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ReferenceLine, ResponsiveContainer, Legend,
@@ -43,11 +43,45 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   );
 }
 
+function InfoContent() {
+  return (
+    <>
+      <div className="space-y-3">
+        <div>
+          <span className="font-semibold text-[#10b981]">Seller's Market (+1)</span>
+          <p className="text-[#6b7280] mt-0.5 text-xs">Low inventory, homes sell fast, prices rising. Sellers hold more negotiating power.</p>
+        </div>
+        <div>
+          <span className="font-semibold text-[#0ea5e9]">Buyer's Market (−1)</span>
+          <p className="text-[#6b7280] mt-0.5 text-xs">More homes than buyers, longer days on market, prices soften. Buyers can negotiate.</p>
+        </div>
+        <div>
+          <span className="font-semibold text-[#6b7280]">Neutral (0)</span>
+          <p className="text-[#6b7280] mt-0.5 text-xs">Supply and demand roughly balanced. Typical conditions for both sides.</p>
+        </div>
+      </div>
+      <p className="mt-3 pt-3 border-t border-[#2a2a2a] text-[#4b5563] text-xs">Score combines HPI growth, building permits, days on market, and rate trends.</p>
+    </>
+  );
+}
+
 export default function MarketConditionChart({ data, stateName, loading }: Props) {
   const latest = data[data.length - 1];
   const [showInfo, setShowInfo] = useState(false);
+  const infoRef = useRef<HTMLDivElement>(null);
 
   const gradientId = 'marketGradient';
+
+  useEffect(() => {
+    if (!showInfo) return;
+    function close(e: MouseEvent) {
+      if (infoRef.current && !infoRef.current.contains(e.target as Node)) {
+        setShowInfo(false);
+      }
+    }
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [showInfo]);
 
   const ticks = useMemo(() => {
     if (!data.length) return [];
@@ -60,33 +94,41 @@ export default function MarketConditionChart({ data, stateName, loading }: Props
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold text-white">Market Condition — {stateName}</h2>
-          <div className="relative">
+          <div ref={infoRef} className="relative">
             <button
-              onMouseEnter={() => setShowInfo(true)}
-              onMouseLeave={() => setShowInfo(false)}
-              className="text-[#4b5563] hover:text-[#6b7280] transition-colors flex items-center"
+              onClick={() => setShowInfo(s => !s)}
+              className={`transition-colors flex items-center ${showInfo ? 'text-[#0ea5e9]' : 'text-[#4b5563] hover:text-[#6b7280]'}`}
               aria-label="Market condition explained"
             >
               <Info className="w-4 h-4" />
             </button>
+
             {showInfo && (
-              <div className="absolute left-0 top-6 z-20 w-72 bg-[#1a1a1a] border border-[#333333] rounded-lg shadow-xl p-3 text-xs">
-                <div className="space-y-2">
-                  <div>
-                    <span className="font-semibold text-[#10b981]">Seller's Market (+1)</span>
-                    <p className="text-[#6b7280] mt-0.5">Low inventory, homes sell fast, prices rising. Sellers hold more negotiating power.</p>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-[#0ea5e9]">Buyer's Market (−1)</span>
-                    <p className="text-[#6b7280] mt-0.5">More homes than buyers, longer days on market, prices soften. Buyers can negotiate.</p>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-[#6b7280]">Neutral (0)</span>
-                    <p className="text-[#6b7280] mt-0.5">Supply and demand roughly balanced. Typical conditions for both sides.</p>
+              <>
+                {/* Mobile: full-screen centered modal */}
+                <div
+                  className="sm:hidden fixed inset-0 z-40 bg-black/70 flex items-center justify-center p-6"
+                  onClick={() => setShowInfo(false)}
+                >
+                  <div
+                    className="bg-[#1a1a1a] border border-[#333333] rounded-xl shadow-2xl p-5 w-full max-w-sm"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-sm font-semibold text-white">Market Conditions</span>
+                      <button onClick={() => setShowInfo(false)} className="text-[#4b5563] hover:text-[#c8c8c8]">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <InfoContent />
                   </div>
                 </div>
-                <p className="mt-2 pt-2 border-t border-[#2a2a2a] text-[#4b5563]">Score combines HPI growth, building permits, days on market, and rate trends.</p>
-              </div>
+
+                {/* Desktop: absolute dropdown */}
+                <div className="hidden sm:block absolute left-0 top-7 z-20 w-72 bg-[#1a1a1a] border border-[#333333] rounded-lg shadow-xl p-3 text-xs">
+                  <InfoContent />
+                </div>
+              </>
             )}
           </div>
         </div>
